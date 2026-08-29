@@ -1,6 +1,6 @@
 ---
 name: weplan
-description: Use when the user asks to see, open, view, preview, share, or publish an HTML file or page in a browser, asks for "a link" to HTML output, or asks to send an HTML report/dashboard/prototype/chart/mockup to someone, and whenever you have produced an HTML artifact that is easier to review as a link than as a file. Also use when the user asks to update or revise a page they already have a weplan link for. Publishes self-contained HTML as a shareable URL with the weplan CLI (npx weplan) and updates pages in place.
+description: Use when the user asks to see, open, view, preview, share, or publish an HTML file or page in a browser, asks for "a link" to HTML output, or asks to send an HTML report/dashboard/prototype/chart/mockup to someone, and whenever you have produced an HTML artifact that is easier to review as a link than as a file. Also use when the user shares a plan.wecodeph.dev link and wants it read, summarized, reviewed, or changed, or asks to update a page they already have a weplan link for. Publishes self-contained HTML as a shareable URL with the weplan CLI (npx weplan), retrieves pages from links, and updates pages in place.
 license: MIT
 metadata:
   author: wecodeph-dev
@@ -24,6 +24,20 @@ weplan turns one HTML file into a URL like `https://plan.wecodeph.dev/p/<slug>` 
    npx -y weplan update <slug> <file.html> --json
    ```
    Do not create a new page for a revision unless the user asks for a separate one.
+
+## Reading a shared link
+
+When the user gives you a `https://plan.wecodeph.dev/p/<slug>` link, do not fetch it with curl or a browser tool; private pages return a sign-in redirect. Use the CLI, which sends the user's credentials:
+
+```bash
+npx -y weplan get <url> > page.html          # raw HTML to a file
+npx -y weplan get <url> --json               # {slug, url, visibility, size, html}
+npx -y weplan get <url> --assets <dir>       # <dir>/index.html plus embedded images as files
+```
+
+Charts and diagrams are usually data in the HTML (SVG, Mermaid, chart configs), so the text is the source of truth: read the values and labels from it. If the page embeds raster images (screenshots, exported PNGs as data URIs), use `--assets <dir>` and open the extracted `img-N.png` files to see them.
+
+Public pages need no login. Private pages work when the user is the owner or on the allow list; a 401 or 403 means the user must sign in (`npx -y weplan login`) or ask the owner for access. Do not try to bypass it. To change a shared page: `get` it, edit the file, then `update <slug> page.html` so the link stays the same.
 
 ## Options
 
