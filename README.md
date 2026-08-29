@@ -1,6 +1,6 @@
 # wecodeph-dev/skills
 
-Agent skills from [wecodeph.dev](https://wecodeph.dev), in the open [Agent Skills](https://agentskills.io) format. They work with any agent that supports skills — Claude Code, Codex, Cursor, Copilot, OpenCode, Zed and others.
+Agent skills from [wecodeph.dev](https://wecodeph.dev), in the open [Agent Skills](https://agentskills.io) format. They work with any agent that supports skills: Claude Code, Codex, Cursor, Copilot, OpenCode, Zed and others.
 
 ## Install
 
