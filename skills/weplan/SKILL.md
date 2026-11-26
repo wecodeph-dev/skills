@@ -27,7 +27,7 @@ weplan turns one HTML file into a URL like `https://plan.wecodeph.dev/p/<slug>` 
 
 ## Page style
 
-When you write the page yourself (a spec, plan, report, audit or dashboard), read `styleguide.md` in this skill's folder before writing any HTML and follow it. In short: light by default with a black dark mode behind a toggle, grayscale with color only for status and problems, cards with hairline borders, and a layout that fills a wide screen and collapses to one column on a phone. It includes starter CSS and a screenshot check to run before publishing.
+When you write the page yourself (a spec, plan, report, audit or dashboard), read `styleguide.md` in this skill's folder before writing any HTML and follow it. In short: a black page by default with a light mode toggle, grayscale with color only for status and problems, cards with hairline borders, and a layout that fills a wide screen and collapses to one column on a phone. It includes starter CSS and a screenshot check to run before publishing.
 
 Do not restyle an HTML file the user gives you to publish, and follow the user's own design when they ask for one.
 

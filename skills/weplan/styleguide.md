@@ -6,14 +6,14 @@ The reference page is a spec with diagrams, a permission matrix and phase cards.
 
 ## Theme
 
-- Light is the default, whatever the reader's system setting is. Set `data-theme="light"` on `<html>` and do not use `prefers-color-scheme`.
-- Dark is a pure black page with near-black cards, switched by a small button at the top right that flips `data-theme`.
-- Keep the choice in the URL as `?theme=dark`. Read it on load and update it with `history.replaceState` when the button is clicked, so a reload or a shared link keeps the theme. Light has no parameter.
+- Dark is the default, whatever the reader's system setting is. Set `data-theme="dark"` on `<html>` and do not use `prefers-color-scheme`.
+- Use a pure black page with near-black cards in dark mode. A small button at the top right switches between dark and light by changing `data-theme`.
+- Keep the light theme choice in the URL as `?theme=light`. Read it on load and update it with `history.replaceState` when the button is clicked, so a reload or a shared link keeps the theme. Dark has no theme parameter.
 - Do not use `localStorage`. Pages run in a sandboxed origin where it throws.
 
 ## Color
 
-- Grayscale does almost all the work: white page, hairline borders, one muted gray for secondary text.
+- Grayscale does almost all the work: a black page in dark mode or a white page in light mode, hairline borders, one muted gray for secondary text.
 - Red marks a problem. Green, amber and a gray dash mark allowed, conditional and denied. No other colors.
 - One inverted box (black on the light theme, near-white on dark) is allowed per diagram, for the single thing the reader should look at.
 
@@ -28,8 +28,8 @@ Do not use colored stripes down the side of cards, tinted callout boxes, pill ba
 
 ## Components
 
-- **Card.** White, 1px border, 14px radius, faint shadow, 18px by 20px padding. A title, an optional muted line under it, then the content.
-- **Diagram.** A light gray panel that holds rows of boxes. Each row has a small muted sentence-case label. Rows connect with a 1px vertical line, not arrowheads. Dashed boxes mean "later".
+- **Card.** Near-black in dark mode or white with a faint shadow in light mode, 1px border, 14px radius, 18px by 20px padding. A title, an optional muted line under it, then the content.
+- **Diagram.** Rows of boxes sit on the `--panel` background. Each row has a small muted sentence-case label. Rows connect with a 1px vertical line, not arrowheads. Dashed boxes mean "later".
 - **Status.** A 9px green dot for allowed, an amber ring for conditional, a short gray dash for denied. Put the meaning in a `title` attribute and a legend above the table.
 - **Table.** No outer border. Hairline row separators, a stronger line under the header, group rows with a bold title and a muted subtitle.
 - **Numbered items.** Phases and decisions use a two-digit monospace counter in faint gray (`00`, `01`), not colored circles.
@@ -45,18 +45,18 @@ Do not use colored stripes down the side of cards, tinted callout boxes, pill ba
 
 ```css
 :root {
-  --bg: #ffffff; --panel: #fafafa; --card: #ffffff; --fg: #0a0a0a; --muted: #6f6f6f; --faint: #a3a3a3;
-  --line: #ebebeb; --line-strong: #d9d9d9; --code: #f4f4f4;
-  --invert-bg: #0a0a0a; --invert-fg: #ffffff; --invert-muted: #a3a3a3;
-  --green: #16803c; --amber: #b45309; --red: #d92d20; --red-bg: #fef3f2;
-  --shadow: 0 1px 2px rgba(0,0,0,.04), 0 1px 1px rgba(0,0,0,.02);
-}
-[data-theme="dark"] {
   --bg: #000000; --panel: #0a0a0a; --card: #0f0f0f; --fg: #ededed; --muted: #8f8f8f; --faint: #5c5c5c;
   --line: #1c1c1c; --line-strong: #2b2b2b; --code: #161616;
   --invert-bg: #ededed; --invert-fg: #0a0a0a; --invert-muted: #5c5c5c;
   --green: #3ecf7a; --amber: #f5a623; --red: #ff6b5e; --red-bg: #1c0a08;
   --shadow: none;
+}
+[data-theme="light"] {
+  --bg: #ffffff; --panel: #fafafa; --card: #ffffff; --fg: #0a0a0a; --muted: #6f6f6f; --faint: #a3a3a3;
+  --line: #ebebeb; --line-strong: #d9d9d9; --code: #f4f4f4;
+  --invert-bg: #0a0a0a; --invert-fg: #ffffff; --invert-muted: #a3a3a3;
+  --green: #16803c; --amber: #b45309; --red: #d92d20; --red-bg: #fef3f2;
+  --shadow: 0 1px 2px rgba(0,0,0,.04), 0 1px 1px rgba(0,0,0,.02);
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--fg); overflow-wrap: anywhere; -webkit-font-smoothing: antialiased;
@@ -115,7 +115,7 @@ nav a { color: var(--muted); text-decoration: none; }
 Theme toggle, kept in the URL:
 
 ```html
-<button class="toggle" id="toggle" type="button">Dark</button>
+<button class="toggle" id="toggle" type="button">Light</button>
 <script>
   const root = document.documentElement, toggle = document.getElementById("toggle");
   function setTheme(theme, write) {
@@ -124,22 +124,36 @@ Theme toggle, kept in the URL:
     if (!write) return;
     try {
       const url = new URL(location.href);
-      if (theme === "dark") url.searchParams.set("theme", "dark"); else url.searchParams.delete("theme");
+      if (theme === "light") url.searchParams.set("theme", "light"); else url.searchParams.delete("theme");
       history.replaceState(null, "", url);
     } catch (e) {}
   }
-  setTheme(new URLSearchParams(location.search).get("theme") === "dark" ? "dark" : "light", false);
+  setTheme(new URLSearchParams(location.search).get("theme") === "light" ? "light" : "dark", false);
   toggle.addEventListener("click", () => setTheme(root.dataset.theme === "dark" ? "light" : "dark", true));
 </script>
 ```
 
 ## Check before publishing
 
-Screenshot the file with headless Chrome and look at the image. Check a wide window (about 1680px) and a narrow one, in both themes, and scroll far enough to see every section type.
+Use `agent-browser` to capture the local page at desktop and phone widths in both themes. On a fresh machine, run `npx -y agent-browser install` once to download the browser. To reuse an installed Chromium, set `AGENT_BROWSER_EXECUTABLE_PATH` to its executable.
 
 ```bash
-"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --hide-scrollbars \
-  --window-size=1680,3000 --screenshot=wide.png "file://$PWD/page.html"
+(
+  set -e
+  browser() { npx -y agent-browser --session "weplan-$$" "$@"; }
+  trap 'browser close' EXIT
+  page=$(node -p 'require("node:url").pathToFileURL("page.html").href')
+
+  for theme in dark light; do
+    url="$page"
+    if [ "$theme" = light ]; then url="$page?theme=light"; fi
+    browser --allow-file-access open "$url"
+    browser set viewport 1680 1000
+    browser screenshot --full "wide-$theme.png"
+    browser set viewport 360 800
+    browser screenshot --full "phone-$theme.png"
+  done
+)
 ```
 
-Headless Chrome will not go narrower than 500px, so a 500px screenshot stands in for a phone. To see the dark theme, add `?theme=dark` to the file URL. Tell the user which widths and sections you looked at.
+Look at all four screenshots. Check each section type for clipping, sideways overflow, and readable text. Tell the user which widths and sections you inspected.
